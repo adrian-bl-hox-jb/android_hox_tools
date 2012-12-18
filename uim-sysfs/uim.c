@@ -698,13 +698,6 @@ int main(int argc, char *argv[])
 	if( insmod(KO_HCIUART, "") )
 		UIM_ERR(" Failed to load hci_uart module");
 
-	if( insmod(KO_TIHCI, "") == 0 ) {
-		chmod("/dev/tihci", 0666);
-	}
-	else {
-		UIM_ERR(" Failed to load ti_hci_drv module");
-	}
-
 	if (0 == lstat(KO_ST_DRV, &file_stat)) {
 		if (insmod(KO_ST_DRV, "") < 0) {
 			UIM_ERR(" Error inserting st_drv module");
@@ -764,6 +757,15 @@ int main(int argc, char *argv[])
 		UIM_DBG("FM V4L2 driver module un-available... ");
 		UIM_DBG("FM V4L2 driver built into the kernel ?");
 	}
+
+
+	if( insmod(KO_TIHCI, "") == 0 ) {
+		chmod("/dev/tihci", 0666);
+	} else { 
+		UIM_ERR(" Failed to load ti_hci_drv module");
+	}
+
+
 	/* Change the permissions for v4l2 Fm device node */
 	if ((0 == lstat("/dev/radio0", &file_stat)) && chmod("/dev/radio0", 0666) < 0) {
 		UIM_ERR("unable to chmod /dev/radio0, might not exist");
