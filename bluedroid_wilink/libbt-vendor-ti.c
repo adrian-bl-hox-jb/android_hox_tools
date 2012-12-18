@@ -71,11 +71,32 @@ int ti_op(bt_vendor_opcode_t opcode, void **param) {
     switch(opcode)
     {
         case BT_VND_OP_USERIAL_OPEN:
-            fd = open("/dev/hci_tty", O_RDWR);
+            fd = open("/dev/tihci", O_RDWR);
             if (fd < 0) {
-                ALOGE(" Can't open hci_tty");
+                ALOGE(" Can't open tihci");
                 return -1;
             }
+
+            /* fixme: this needs to be in-sync with the kernel and should probably depend on the kernel module include */
+            /* and thank you TI for the funny spelling error! YMMD */
+            #define HCIIF_IOCTL_DEVUP 1
+            #define HCIIF_EVT_DEFUALT 0xff
+            struct {
+                unsigned long    chan_mask;
+                unsigned char    evt_type[4]; /*  up to 4 events can be registered per client (0 will mark EOF)
+                                                                        evtType[0] == 0xff makes a wildcard */
+            } hciif_filter;
+
+            hciif_filter.chan_mask = 0x1 | 0x2 | 0x3 | 0x4 | 0x8;
+            hciif_filter.evt_type[0] = HCIIF_EVT_DEFUALT;
+            hciif_filter.evt_type[1] = HCIIF_EVT_DEFUALT;
+            hciif_filter.evt_type[2] = HCIIF_EVT_DEFUALT;
+            hciif_filter.evt_type[3] = HCIIF_EVT_DEFUALT;
+ 
+            int res = ioctl(fd, HCIIF_IOCTL_DEVUP, &hciif_filter);
+
+            ALOGD("opened /dev/tihci res:%d", res);
+
             fd_array[CH_CMD] = fd;
             hci_tty_fd = fd; /* for userial_close op */
             return 1;        /* CMD/EVT/ACL on same fd */
