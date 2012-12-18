@@ -9,3 +9,6 @@
 #define KO_FM_DRV     "/system/lib/modules/fm_drv.ko"
 #define KO_GPS_DRV    "/system/lib/modules/gps_drv.ko"
 #define KO_FM_V4L     "/system/lib/modules/fm_v4l2_drv.ko"
+#define KO_BLUETOOTH  "/system/lib/modules/bluetooth.ko"
+#define KO_HCIUART    "/system/lib/modules/hci_uart.ko"
+#define KO_TIHCI      "/system/lib/modules/ti_hci_drv.ko"

@@ -692,6 +692,19 @@ int main(int argc, char *argv[])
 	}
 #else  /* if ANDROID */
 
+	if( insmod(KO_BLUETOOTH, "") )
+		UIM_ERR(" Failed to load bluetooth module");
+
+	if( insmod(KO_HCIUART, "") )
+		UIM_ERR(" Failed to load hci_uart module");
+
+	if( insmod(KO_TIHCI, "") == 0 ) {
+		chmod("/dev/tihci", 0666);
+	}
+	else {
+		UIM_ERR(" Failed to load ti_hci_drv module");
+	}
+
 	if (0 == lstat(KO_ST_DRV, &file_stat)) {
 		if (insmod(KO_ST_DRV, "") < 0) {
 			UIM_ERR(" Error inserting st_drv module");
