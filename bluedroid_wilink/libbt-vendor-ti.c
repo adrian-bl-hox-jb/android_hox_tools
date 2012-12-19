@@ -110,6 +110,8 @@ int ti_op(bt_vendor_opcode_t opcode, void **param) {
         case BT_VND_OP_FW_CFG:
             bt_vendor_cbacks->fwcfg_cb(BT_VND_OP_RESULT_SUCCESS);
             return 0;
+        case BT_VND_OP_LPM_SET_MODE:
+                bt_vendor_cbacks->lpm_cb(BT_VND_OP_RESULT_SUCCESS); //dummy
         default:
             break;
     }
