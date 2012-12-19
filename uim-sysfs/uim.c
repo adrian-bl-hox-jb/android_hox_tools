@@ -760,7 +760,9 @@ int main(int argc, char *argv[])
 
 
 	if( insmod(KO_TIHCI, "") == 0 ) {
-		chmod("/dev/tihci", 0666);
+		/* we are not samsung */
+		chmod("/dev/tihci", 0660);
+		chown("/dev/tihci", AID_SYSTEM, AID_BLUETOOTH);
 	} else { 
 		UIM_ERR(" Failed to load ti_hci_drv module");
 	}
