@@ -12,3 +12,6 @@
 #define KO_BLUETOOTH  "/system/lib/modules/bluetooth.ko"
 #define KO_HCIUART    "/system/lib/modules/hci_uart.ko"
 #define KO_TIHCI      "/system/lib/modules/ti_hci_drv.ko"
+#define KO_HIDP       "/system/lib/modules/hidp.ko"
+#define KO_UHID       "/system/lib/modules/uhid.ko"
+

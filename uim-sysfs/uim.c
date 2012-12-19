@@ -766,6 +766,14 @@ int main(int argc, char *argv[])
 	}
 
 
+	if( insmod(KO_HIDP, "") )
+		UIM_ERR(" Failed to load hidp module");
+
+	if( insmod(KO_UHID, "") )
+		UIM_ERR(" Failed to load uhid module");
+
+
+
 	/* Change the permissions for v4l2 Fm device node */
 	if ((0 == lstat("/dev/radio0", &file_stat)) && chmod("/dev/radio0", 0666) < 0) {
 		UIM_ERR("unable to chmod /dev/radio0, might not exist");
