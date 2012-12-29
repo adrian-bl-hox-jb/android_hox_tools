@@ -67,7 +67,6 @@ int ti_op(bt_vendor_opcode_t opcode, void **param) {
     int fd;
     int *fd_array = (int (*)[]) param;
 
-    ALOGI("vendor op - %d", opcode);
     switch(opcode)
     {
         case BT_VND_OP_USERIAL_OPEN:
@@ -77,25 +76,7 @@ int ti_op(bt_vendor_opcode_t opcode, void **param) {
                 return -1;
             }
 
-            /* fixme: this needs to be in-sync with the kernel and should probably depend on the kernel module include */
-            /* and thank you TI for the funny spelling error! YMMD */
-            #define HCIIF_IOCTL_DEVUP 1
-            #define HCIIF_EVT_DEFUALT 0xff
-            struct {
-                unsigned long    chan_mask;
-                unsigned char    evt_type[4]; /*  up to 4 events can be registered per client (0 will mark EOF)
-                                                                        evtType[0] == 0xff makes a wildcard */
-            } hciif_filter;
-
-            hciif_filter.chan_mask = 0x1 | 0x2 | 0x3 | 0x4 | 0x8;
-            hciif_filter.evt_type[0] = HCIIF_EVT_DEFUALT;
-            hciif_filter.evt_type[1] = HCIIF_EVT_DEFUALT;
-            hciif_filter.evt_type[2] = HCIIF_EVT_DEFUALT;
-            hciif_filter.evt_type[3] = HCIIF_EVT_DEFUALT;
- 
-            int res = ioctl(fd, HCIIF_IOCTL_DEVUP, &hciif_filter);
-
-            ALOGD("opened /dev/tihci res:%d", res);
+            ALOGD("opened /dev/tihci as fd %d", fd);
 
             fd_array[CH_CMD] = fd;
             hci_tty_fd = fd; /* for userial_close op */
@@ -111,8 +92,12 @@ int ti_op(bt_vendor_opcode_t opcode, void **param) {
             bt_vendor_cbacks->fwcfg_cb(BT_VND_OP_RESULT_SUCCESS);
             return 0;
         case BT_VND_OP_LPM_SET_MODE:
-                bt_vendor_cbacks->lpm_cb(BT_VND_OP_RESULT_SUCCESS); //dummy
+            bt_vendor_cbacks->lpm_cb(BT_VND_OP_RESULT_SUCCESS); //dummy
+            return 0;
+        case BT_VND_OP_LPM_WAKE_SET_STATE:
+            return 0; // avoid logspam
         default:
+            ALOGI("skipping unimplemented vendor OP: %d", opcode);
             break;
     }
 
