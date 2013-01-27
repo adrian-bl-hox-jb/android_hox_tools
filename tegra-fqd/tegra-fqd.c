@@ -12,7 +12,7 @@
 
 #define LOG_TAG "tegra-fqd"
 #define AID_SYSTEM  1000
-#define AID_MEDIA   1013 
+#define AID_AUDIO   1005
 
 static int *pp = power_profiles[0];
 
@@ -30,7 +30,7 @@ int main() {
 	/* create dir and try to watch it */
 	umask(0);
 	mkdir(WATCHDIR, S_IRWXU | S_IRWXG);
-	chown(WATCHDIR, AID_SYSTEM, AID_MEDIA);
+	chown(WATCHDIR, AID_SYSTEM, AID_AUDIO);
 	wd = inotify_add_watch(fd, WATCHDIR, IN_CREATE|IN_DELETE);
 	
 	if(wd < 0)
