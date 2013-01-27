@@ -3,6 +3,7 @@ static void xdie(char *e);
 static void update_freq();
 static void init_freq();
 static void sysfs_write(char *path, int value);
+static int bval(int a, int b);
 
 /* Tegra Power Profiles */
 #define MAX_POWER_PROFILES 5
@@ -21,7 +22,9 @@ static int power_profiles[MAX_POWER_PROFILES][12] = {
 #define T_SCREEN_ON "screen_on"
 #define T_AUDIO_ON  "audio_on"
 #define T_A2DP_ON   "a2dp_on"
+#define T_MTP_ON    "mtp_on"
 
-#define MINFREQ_BASE   51000   /* lowest supported frequency */
-#define MINFREQ_AUDIO 102000   /* min. frequency while playing audio */
-#define MINFREQ_A2DP  204000   /* min. freq to use while on BT audio */
+#define MINFREQ_BASE   51000   /* lowest supported frequency            */
+#define MINFREQ_AUDIO 102000   /* min. frequency while playing audio    */
+#define MINFREQ_A2DP  204000   /* min. freq to use while on BT audio    */
+#define MINFREQ_MTP   475000   /* run fast if we are transferring files */
