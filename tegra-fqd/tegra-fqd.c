@@ -28,6 +28,7 @@ int main() {
 		xdie("inotify_init failed!");
 	
 	/* create dir and try to watch it */
+	umask(0);
 	mkdir(WATCHDIR, S_IRWXU | S_IRWXG);
 	chown(WATCHDIR, AID_SYSTEM, AID_MEDIA);
 	wd = inotify_add_watch(fd, WATCHDIR, IN_CREATE|IN_DELETE);
