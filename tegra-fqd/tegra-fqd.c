@@ -71,7 +71,6 @@ static void update_freq() {
 	
 	on = 0;
 	minfreq = MINFREQ_BASE;
-	maxfreq = (on ? pp[0] : pp[1]);
 	
 	while( (dentry = readdir(dfd)) != NULL ) {
 		ALOGI("+ item %d %s %d\n", dentry->d_type, dentry->d_name, strcmp(T_SCREEN_ON, dentry->d_name));
@@ -86,7 +85,8 @@ static void update_freq() {
 			minfreq = bval(minfreq, MINFREQ_MTP);
 	}
 	closedir(dfd);
-	
+
+	maxfreq = (on ? pp[0] : pp[1]);
 	if(minfreq > maxfreq)
 		maxfreq = minfreq;
 	
