@@ -63,7 +63,7 @@ static void update_freq() {
 	int on;
 	int minfreq;
 	int maxfreq;
-	
+	int reqfreq;
 	dfd = opendir(WATCHDIR);
 	if(dfd == NULL)
 		xdie("opendir() failed");
@@ -71,24 +71,30 @@ static void update_freq() {
 	
 	on = 0;
 	minfreq = MINFREQ_BASE;
+	reqfreq = 0;
 	
 	while( (dentry = readdir(dfd)) != NULL ) {
 		ALOGI("+ item %d %s %d\n", dentry->d_type, dentry->d_name, strcmp(T_SCREEN_ON, dentry->d_name));
 		if(!strcmp(T_SCREEN_ON, dentry->d_name))
 			on = 1;
 
-		if(!strcmp(T_AUDIO_ON, dentry->d_name))
+		if(!strcmp(T_AUDIO_ON, dentry->d_name)) {
 			minfreq = bval(minfreq, MINFREQ_AUDIO);
-		if(!strcmp(T_A2DP_ON, dentry->d_name))
+			reqfreq = bval(reqfreq, REQFREQ_AUDIO);
+		}
+		if(!strcmp(T_A2DP_ON, dentry->d_name)) {
 			minfreq = bval(minfreq, MINFREQ_A2DP);
-		if(!strcmp(T_MTP_ON, dentry->d_name))
+			reqfreq = bval(reqfreq, REQFREQ_AUDIO);
+		}
+		if(!strcmp(T_MTP_ON, dentry->d_name)) {
 			minfreq = bval(minfreq, MINFREQ_MTP);
+		}
 	}
 	closedir(dfd);
 
-	maxfreq = (on ? pp[0] : pp[1]);
-	if(minfreq > maxfreq)
-		maxfreq = minfreq;
+	maxfreq = (on ? pp[0] : pp[1]);   /* screen on or off?                               */
+	maxfreq = bval(reqfreq, maxfreq); /* set maxfreq to 'reqfreq' if bigger (= non null) */
+	maxfreq = bval(minfreq, maxfreq); /* increase maxfreq if minfreq is bigger           */
 	
 	/* write twice to avoid state-change erros in the tegra cpufreq driver
 	   (new_min > old_freq) */

@@ -28,3 +28,5 @@ static int power_profiles[MAX_POWER_PROFILES][12] = {
 #define MINFREQ_AUDIO 102000   /* min. frequency while playing audio    */
 #define MINFREQ_A2DP  204000   /* min. freq to use while on BT audio    */
 #define MINFREQ_MTP   475000   /* run fast if we are transferring files */
+
+#define REQFREQ_AUDIO 475000   /* set max_freq to at least this while playing audio */
