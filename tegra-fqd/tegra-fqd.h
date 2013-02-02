@@ -6,10 +6,11 @@ static void sysfs_write(char *path, int value);
 static int bval(int a, int b);
 
 /* Tegra Power Profiles */
-#define MAX_POWER_PROFILES 5
+#define MAX_POWER_PROFILES 6
 static int power_profiles[MAX_POWER_PROFILES][12] = {
  /*   scaling_max_freq    boost_factor ccap_level,   ccap_st,  max_boost,    go_maxspeed                 */
     { 1500000, 475000,    0, 2,        1300, 1200,    1, 1,    0, 250000,    85, 95 }, /* NVidia default */
+    { 1200000, 475000,    0, 2,        1300, 1200,    1, 1,    0, 250000,    85, 95 }, /* Fine           */
     {  880000, 204000,    0, 2,        1300, 1200,    1, 1,    0, 250000,    85, 95 }, /* Sane           */
     {  640000, 204000,    0, 2,        1300, 1200,    1, 1,    0, 250000,    85, 95 }, /* ok             */
     {  475000, 204000,    0, 2,        1300, 1200,    1, 1,    0, 250000,    85, 95 }, /* insane         */
@@ -23,6 +24,7 @@ static int power_profiles[MAX_POWER_PROFILES][12] = {
 #define T_AUDIO_ON  "audio_on"
 #define T_A2DP_ON   "a2dp_on"
 #define T_MTP_ON    "mtp_on"
+#define T_SUICIDE   "suicide"
 
 #define MINFREQ_BASE   51000   /* lowest supported frequency            */
 #define MINFREQ_AUDIO 102000   /* min. frequency while playing audio    */
