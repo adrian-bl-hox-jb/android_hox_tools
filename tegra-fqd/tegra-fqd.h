@@ -26,6 +26,9 @@ static int power_profiles[MAX_POWER_PROFILES][12] = {
 #define T_MTP_ON    "mtp_on"
 #define T_SUICIDE   "suicide"
 
+#define H2W_FORCE_SYSFS "/sys/kernel/pabx_h2w_forced"
+#define H2W_FORCE_PREF  "/data/misc/pabx_h2w_forced"
+
 #define MINFREQ_BASE   51000   /* lowest supported frequency            */
 #define MINFREQ_AUDIO 102000   /* min. frequency while playing audio    */
 #define MINFREQ_A2DP  204000   /* min. freq to use while on BT audio    */

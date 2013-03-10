@@ -67,6 +67,8 @@ static void update_freq() {
 	int minfreq;
 	int maxfreq;
 	int reqfreq;
+	int force_h2w = 0; /* bitmask: 0=audio, 1=a2dp, 2=pref_on */
+	
 	dfd = opendir(WATCHDIR);
 	if(dfd == NULL)
 		xdie("opendir() failed");
@@ -93,10 +95,12 @@ static void update_freq() {
 		if(!strcmp(T_AUDIO_ON, dentry->d_name)) {
 			minfreq = bval(minfreq, MINFREQ_AUDIO);
 			reqfreq = bval(reqfreq, REQFREQ_AUDIO);
+			force_h2w |= (1 << 0);
 		}
 		if(!strcmp(T_A2DP_ON, dentry->d_name)) {
 			minfreq = bval(minfreq, MINFREQ_A2DP);
 			reqfreq = bval(reqfreq, REQFREQ_AUDIO);
+			force_h2w |= (1 << 1);
 		}
 		if(!strcmp(T_MTP_ON, dentry->d_name)) {
 			minfreq = bval(minfreq, MINFREQ_MTP);
@@ -107,6 +111,12 @@ static void update_freq() {
 	maxfreq = (on ? pp[0] : pp[1]);   /* screen on or off?                               */
 	maxfreq = bval(reqfreq, maxfreq); /* set maxfreq to 'reqfreq' if bigger (= non null) */
 	maxfreq = bval(minfreq, maxfreq); /* increase maxfreq if minfreq is bigger           */
+	
+	if(!access(H2W_FORCE_PREF, F_OK))
+		force_h2w |= (1 << 2);
+	
+	i = (force_h2w == ( (1<<0)|(1<<2) ) ? 1 : 0);
+	sysfs_write(H2W_FORCE_SYSFS, i);
 	
 	/* -1 == unmanaged - do not write any values */
 	if(pprofile < 0)
@@ -119,11 +129,8 @@ static void update_freq() {
 		sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",         maxfreq);
 		sysfs_write("/sys/module/cpu_tegra/parameters/cpu_user_cap",                 maxfreq); /* same as max_freq */
 	}
-	sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",      on ? pp[2] : pp[3]);
 	sysfs_write("/sys/kernel/tegra_cap/core_cap_level",                          on ? pp[4] : pp[5]);	
 	sysfs_write("/sys/kernel/tegra_cap/core_cap_state",                          on ? pp[6] : pp[7]); /* always enabled (?) */
-	sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/max_boost",         on ? pp[8] : pp[9]);
-	sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load",  on ? pp[10]: pp[11]);
 	
 	early_finish:
 		while(0) {}
@@ -147,9 +154,6 @@ static void init_freq() {
 		}
 	}
 
-	sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time", 30000);
-	sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load", 80);
-	sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor", 0);
 }
 
 
